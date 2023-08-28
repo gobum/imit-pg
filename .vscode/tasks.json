@@ -4,6 +4,16 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Build",
+      "type": "shell",
+      "command": "cat src/*.sql > imit.sql",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
       "label": "Update Depends",
       "type": "shell",
       "command": "curl -fsSL https://raw.githubusercontent.com/gobum/hope-pg/main/hope.sql -o ./inc/hope.sql"
