@@ -1,4 +1,16 @@
--- aid 内部实现函数
+-- a.Series(ge, lt)
+create or replace function a.Series(ge int, lt int) returns setof int
+  return generate_series(ge, lt-1);
+
+-- a.Series(le)
+create or replace function a.Series(lt int) returns setof int
+  return generate_series(0, lt-1);
+
+-- a.Random(int)
+create or replace function a.Random(lt int) returns int
+  return (random()*(lt-1))::int;
+
+-- a.Id 根据时间和编号产生 ID
 create or replace function a.Id(at timestamp with time zone, no int) returns varchar(16) as $$
 declare
   CHARS constant char(32) = '0123456789ACDEFGHJKLMNPQRTUVWXYZ';
