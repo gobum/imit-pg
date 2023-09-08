@@ -1,13 +1,16 @@
--- 创建姓氏表
-create table a.ZhFname (
-  i  int primary key,
-  fn varchar
+-- 创建姓氏分布表
+create table a.fname(
+  i   int primary key,
+  n   varchar
 );
 
--- 填入姓氏信息
-insert into a.ZhFname
+
+create or replace function a.Fname() returns varchar
+  return ( select n from random() r join a.fname on (r*132731)::int<i limit 1);
+
+insert into a.fname
 select a[2]::int, a[1] from ( select string_to_array(fn, ',') a from string_to_table(
-'王,9520;李,18860;张,27820;刘,34590;陈,40720;杨,44990;黄,48250;吴,50930;赵,53600;周,56120;徐,58050;孙,59880;'
+'李,9520;王,18860;张,27820;刘,34590;陈,40720;杨,44990;黄,48250;吴,50930;赵,53600;周,56120;徐,58050;孙,59880;'
 '马,61600;朱,63300;胡,64850;林,66360;郭,67860;何,69260;高,70590;罗,71850;郑,73090;梁,74220;谢,75230;宋,76162;'
 '唐,77079;许,77960;邓,78781;冯,79599;韩,80414;曹,81205;曾,81977;彭,82743;肖,83482;蔡,84183;潘,84870;田,85555;'
 '董,86232;袁,86899;于,87541;余,88174;蒋,88806;叶,89438;杜,90057;苏,90663;魏,91266;程,91867;吕,92463;丁,93039;'
@@ -108,17 +111,8 @@ select a[2]::int, a[1] from ( select string_to_array(fn, ',') a from string_to_t
 '紫,132697;自,132702;字,132707;宗政,132712;纵,132717;俎,132722;左丘,132727;佐,132732'
 , ';') fn ) a;
 
--- a.ZhFname() 生产中文姓氏
-create or replace function a.ZhFname() returns varchar
-  return (
-    select fn
-      from (select min(i) i from a.ZhFname where (random()*132731)::int<i) i
-      join a.ZhFname fn
-        on fn.i=i.i
-  );
-
--- a.ZhName() 产生一个中文人名
-create or replace function a.ZhName() returns varchar(4) as $$
+-- a.Name() 产生一个中文人名
+create or replace function a.Name() returns varchar as $$
 declare
   middle constant text = 
     '安彬斌滨冰兵婵超朝琛臣辰晨称诚澄弛驰赤冲春聪从丛丹德迪笛蝶鼎冬栋繁方放飞菲绯斐芬丰枫峰锋凤甫刚纲钢'
@@ -211,8 +205,8 @@ declare
     '稼沉岫珀扩壹涣托巽泮荧灶晞倚滟弓铠诠沿说羿涧史堪犀俨贯鎏浜骆措感巢秧衷蔼袁琥涉锷右葱牵迷约近粲郭涤'
     '还鲤偲首祠弛鸳徐';
 begin
-  return a.ZhFname()
-    || substr(middle, ceil(power(random(), 4)*char_length(middle))::int, 1)
-    || case when random()<0.3 then '' else substr(last, ceil(power(random(), 4)*char_length(last))::int, 1) end;
+  return a.Fname()
+    || substr(middle, ceil(power(random(), 1)*char_length(middle))::int, 1)
+    || case when random()<0.2 then '' else substr(last, ceil(power(random(), 1.5)*char_length(last))::int, 1) end;
 end;
 $$ language 'plpgsql';
